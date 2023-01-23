@@ -6,43 +6,44 @@
 <body>
 <!-- The form should submit to NewsController.create or NewsController.update,
      depending on whether we are creating or editing an entity -->
-<form th:action="@{'/news{id}' (id=${vest?.id})}" th:method="POST">
+<form th:method="POST" th:action="@{'/news/{id}' (id=${vestToEdit?.getId()})}">
     <div>
+        <!--        <input th:if="${vestToEdit!=null}" type="hidden" name="vestId" th:value="${vestToEdit.getId()}">-->
         <label for="name">Name</label>
         <input type="text"
                id="name"
                name="name"
-               th:value="${vest?.name}"
-               required>
+               required
+               th:value="${vestToEdit!=null?vestToEdit.getName():' '}">
     </div>
     <div>
         <label for="description">Description</label>
         <input type="text"
                id="description"
                name="description"
-               th:value="${vest?.description}"
-               required>
+               required
+               th:value="${vestToEdit!=null?vestToEdit.getDescription():' '}">
     </div>
     <div>
         <label for="price">Price</label>
         <input type="number"
                id="price"
                name="price"
-               th:value="${vest?.price}"
-               required>
+               required
+               th:value="${vestToEdit!=null?vestToEdit.getPrice():' '}">
     </div>
     <div>
         <label>News Type</label><br/>
-        <select id="type" name="type" multiple >
+        <select id="type" name="type">
             <!-- For each type you should have one <option> like below  -->
             <option th:each="type:${types}" th:text="${type.toString()}" th:value="${type}" th:selected="${vestToEdit!=null?vestToEdit.getType():false}"> [type.name]</option>
         </select>
     </div>
     <div>
         <label>News category</label><br/>
-        <select id="category" name="category">
+        <select name="category" id="category">
             <!-- For each location you should have one <option> like below  -->
-            <option th:selected="${vestToEdit!=null?vestToEdit.getCategory():false}" th:each="category:${categories}" th:text="${category.getName()}" th:value="${category.getId()}">[category.name]</option>
+            <option th:selected="${vestToEdit!=null?vestToEdit.getCategory():false}" th:each="category:${categories}" th:text="${category.getName()}" th:value="${category.getId()}"> [category.name]</option>
         </select>
     </div>
 

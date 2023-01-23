@@ -72,6 +72,12 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public List<News> listNewsWithPriceLessThanAndType(Double price, NewsType type) {
-        return new ArrayList<>();
+        if(type == null && price==null)
+            return newsRepository.findAll();
+        if(type==null)
+            return newsRepository.findAllByPriceLessThan(price);
+        if(price==null)
+            return newsRepository.findAllByType(type);
+        return newsRepository.findAllByPriceLessThanAndType(price, type);
     }
 }

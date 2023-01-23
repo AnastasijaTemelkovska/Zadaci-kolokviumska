@@ -7,22 +7,24 @@
 
 <div>
     <!-- The form below should invoke the method NewsController.showNews -->
-    <form th:action="@{/}" th:method="GET" id="filter-form">
+    <form id="filter-form" th:action="@{/}" th:method="GET">
         <label for="price">Price</label>
-        <input id="price" type="number" name="price"/>
+        <input id="price" type="text" name="price"/>
         <label for="type">Type</label>
         <select id="type" name="type">
-            <option value="">All</option>
+            <option th:value="null">All</option>
             <!-- For each type you should have one <option> like below  -->
-            <option th:each="type:${types}" th:value="${type}" th:text="${type.name}"> [type]</option>
+            <option th:each="type:${types}" th:text="${type.name()}" th:value="${type}"> [type]</option>
         </select>
         <button id="filter" type="submit">Filter</button>
     </form>
     <div>
         <!-- NewsController.showAdd -->
-        <a th:href="${'/news/add'}" class="add-item">
-            Add news
-        </a>
+        <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+            <a th:href="@{/news/add}" class="add-item">
+                Add news
+            </a>
+        </th:block>
     </div>
     <table>
         <tr>
@@ -36,23 +38,27 @@
         </tr>
         <!-- For each news you should have one <tr> like below -->
         <tr class="item" th:each="vest:${news}">
-            <td th:text="${vest.name}">[news.name]</td>
-            <td th:text="${vest.description}">[news.description]</td>
-            <td th:text="${vest.price}">[news.price]</td>
-            <td th:text="${vest.type}">[news.type]</td>
-            <td th:text="${vest.category}">[news.category]</td>
-            <td th:text="${vest.likes}"> [news.likes]</td>
+            <td th:text="${vest.getName()}">[news.name]</td>
+            <td th:text="${vest.getDescription()}">[news.description]</td>
+            <td th:text="${vest.getPrice()}">[news.price]</td>
+            <td th:text="${vest.getType()}" th:value="${vest.getType()}">[news.type]</td>
+            <td th:text="${vest.getCategory().getName()}">[news.category]</td>
+            <td th:text="${vest.getLikes()}"> [news.likes]</td>
             <td>
-                <!-- NewsController.delete -->
-                <form th:action="@{'/news/{id}/delete' (id=${vest.id})}" th:method="POST">
-                    <button  sec:authorize="hasRole('ROLE_ADMIN')" type="submit" class="delete-item">Delete</button>
-                </form>
-                <!-- NewsController.showEdit -->
-                <a  sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/news/{id}/edit' (id=${vest.id})}" th:method="POST"class="edit-item">Edit</a>
-                <!-- NewsController.follow -->
-                <form th:action="@{'/news/{id}/like' (id=${vest.id})}" th:method="POST">
-                    <button sec:authorize="hasRole('ROLE_ADMIN')" type="submit" class="like-item">Like</button>
-                </form>
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                    <!-- NewsController.delete -->
+                    <form th:action="@{'/news/{id}/delete' (id=${vest.getId()})}" th:method="POST">
+                        <button type="submit" class="delete-item">Delete</button>
+                    </form>
+                    <!-- NewsController.showEdit -->
+                    <a th:href="@{'/news/{id}/edit' (id=${vest.getId()})}" class="edit-item">Edit</a>
+                </th:block>
+                <th:block sec:authorize="hasRole('ROLE_USER')">
+                    <!-- NewsController.follow -->
+                    <form th:action="@{'/news/{id}/like' (id=${vest.getId()})}" th:method="POST">
+                        <button type="submit" class="like-item">Like</button>
+                    </form>
+                </th:block>
             </td>
         </tr>
     </table>
